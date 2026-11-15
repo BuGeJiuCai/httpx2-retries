@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "httpx2-retries"
+version = "0.2.0"
+description = "Sync and async retry transports and buffered request helpers for HTTPX2"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["httpx2>=2.13,<3", "anyio>=4,<5"]
+
+[project.optional-dependencies]
+trio = ["trio>=0.25"]
+test = ["trio>=0.25"]
+
+[tool.setuptools]
+packages = ["httpx2_retries"]
+package-dir = {httpx2_retries = "."}
+
+[tool.setuptools.package-data]
+httpx2_retries = ["py.typed"]
