@@ -1,5 +1,7 @@
 # httpx2_retries
 
+[English](README.en.md) | [简体中文](README.md)
+
 HTTPX2 的同步和异步重试层，支持 asyncio / uvloop / Trio。
 Python >= 3.11，运行依赖为 `httpx2>=2.13,<3` 和 `anyio>=4,<5`。
 
@@ -68,6 +70,22 @@ with httpx2.Client(transport=RetryTransport(retry=policy), timeout=10) as client
 | --- | --- |
 | `RetryTransport` / `AsyncRetryTransport` | 默认选择，client API 不变，支持 stream |
 | `retry_request` / `aretry_request` | 需要重试正文读取错误、缓冲完整响应时 |
+
+## 示例：测试连接
+
+`examples/check_connection.py` 可以直接测试一个 URL 的连通性，并打印重试次数、
+累计等待和停止原因：
+
+```bash
+uv run python examples/check_connection.py https://example.com
+uv run python examples/check_connection.py https://example.com -n 3 -t 5
+uv run python examples/check_connection.py https://example.com --async
+uv run python examples/check_connection.py https://example.com --async --trio
+```
+
+常用参数：`-n/--retries` 重试次数，`-t/--timeout` 单次超时秒数，`--proxy` 代理，
+`--insecure` 跳过 TLS 校验，`--no-redirects` 不跟随重定向，`--no-body` 不读取正文。
+退出码：`0` 连接成功，`1` HTTP 状态异常，`2` 连接失败或超过重试截止时间。
 
 ## 常用策略
 
