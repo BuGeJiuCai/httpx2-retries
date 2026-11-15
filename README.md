@@ -14,17 +14,20 @@ helper 会缓冲完整响应，不适合无限流或超大下载。已交付给�
 
 ## 安装和目录
 
-在 `E:\Github\TEST-HTTPX2` 父项目目录执行：
+在仓库根目录执行：
 
-```powershell
-uv pip install --python .venv/Scripts/python.exe ./httpx2_retries
-# 使用 Trio 时：
-uv pip install --python .venv/Scripts/python.exe './httpx2_retries[trio]'
+```bash
+uv sync
+# 需要 Trio 运行时可安装可选依赖：
+uv sync --extra trio
 ```
 
-也可以在本目录执行 `python -m pip install .`。
-`httpx2_retries/` 只存放库源码、类型标记、包元数据和文档；
-测试位于父目录 `tests/`，环境、缓存和构建产物也放在父目录。
+`uv sync` 会按 `uv.lock` 创建 `.venv` 并安装项目本身；也可以使用
+`uv pip install -e .` 或 `python -m pip install .`。
+
+`src/httpx2_retries/` 只存放库源码和类型标记；测试位于 `tests/`；
+`pyproject.toml`、`uv.lock`、`.python-version` 位于仓库根目录；
+`.venv/`、缓存和构建产物由 uv 管理，不进入版本控制。
 
 ## Transport 用法
 
@@ -259,15 +262,16 @@ retry = Retry(
 
 ## 测试
 
-在父项目目录执行，测试全部使用本地 MockTransport，不访问业务地址：
+在仓库根目录执行，测试全部使用本地 MockTransport，不访问业务地址：
 
-```powershell
-uv pip install --python .venv/Scripts/python.exe './httpx2_retries[test]'
-.venv/Scripts/python.exe -B -m unittest discover -s tests -v
+```bash
+uv sync
+uv run python -B -m unittest discover -s tests -v
 ```
 
-测试包含同步/异步、Trio、正文读取失败、业务校验、资源释放、取消、预算、截止时间、并发隔离、
-重定向、上传重放保护、参数校验和重复重试配置。未安装 Trio 时仅跳过 Trio 测试。
+`uv sync` 默认安装 `dev` 依赖组（含 Trio）；未安装 Trio 时仅跳过 Trio 测试。
+当前测试覆盖同步/异步 transport 重试、helper 缓冲与重试、单请求禁用重试、
+嵌套重试检测、累计等待预算、截止时间，以及 asyncio/Trio 两种异步运行时。
 
 参考：[HTTPX2 transports](https://pydantic.dev/docs/httpx2/advanced/transports/)、
 [HTTPX Retries API](https://will-ockmore.github.io/httpx-retries/api/)。

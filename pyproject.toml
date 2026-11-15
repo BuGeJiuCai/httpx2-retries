@@ -12,11 +12,23 @@ dependencies = ["httpx2>=2.13,<3", "anyio>=4,<5"]
 
 [project.optional-dependencies]
 trio = ["trio>=0.25"]
+
+[dependency-groups]
 test = ["trio>=0.25"]
+dev = [
+    {include-group = "test"},
+    "mypy>=2,<3",
+    "ruff>=0.16",
+]
 
 [tool.setuptools]
-packages = ["httpx2_retries"]
-package-dir = {httpx2_retries = "."}
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 httpx2_retries = ["py.typed"]
+
+[tool.uv]
+default-groups = ["dev"]
