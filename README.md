@@ -25,8 +25,8 @@ uv sync --extra trio
 `uv sync` 会按 `uv.lock` 创建 `.venv` 并安装项目本身；也可以使用
 `uv pip install -e .` 或 `python -m pip install .`。
 
-`src/httpx2_retries/` 只存放库源码和类型标记；测试位于 `tests/`；
-`pyproject.toml`、`uv.lock`、`.python-version` 位于仓库根目录；
+`src/` 平铺存放 `httpx2_retries` 包源码和类型标记（通过 setuptools package-dir 映射）；
+测试位于 `tests/`；`pyproject.toml`、`uv.lock`、`.python-version` 位于仓库根目录；
 `.venv/`、缓存和构建产物由 uv 管理，不进入版本控制。
 
 ## Transport 用法
@@ -50,6 +50,7 @@ with httpx2.Client(
 ```python
 import httpx2
 from httpx2_retries import Retry, AsyncRetryTransport
+
 
 async def fetch(url: str, proxy: str | None = None):
     transport = AsyncRetryTransport(
@@ -86,12 +87,15 @@ HTTP/2 和 SOCKS 需要 HTTPX2 对应的可选依赖。
 import httpx2
 from httpx2_retries import Retry, aretry_request
 
+
 class TemporaryBusinessError(Exception):
     pass
+
 
 def validate(response: httpx2.Response) -> None:
     if response.json().get("code") == "TEMPORARY_FAILURE":
         raise TemporaryBusinessError("server is temporarily unavailable")
+
 
 async def fetch_json(url: str):
     policy = Retry(
@@ -222,6 +226,7 @@ asleep(response_or_exception, *, delay=None) -> float | None
 ```python
 from httpx2_retries import Retry
 
+
 class LinearRetry(Retry):
     def backoff_strategy(self) -> float:
         return self.attempts_made * 0.5
@@ -251,7 +256,9 @@ class LinearRetry(Retry):
 
 ```python
 retry = Retry(
-    total=10, backoff_factor=0, max_backoff_wait=120,
+    total=10,
+    backoff_factor=0,
+    max_backoff_wait=120,
     status_forcelist={429, 502, 503, 504},
 )
 ```
@@ -273,5 +280,4 @@ uv run python -B -m unittest discover -s tests -v
 当前测试覆盖同步/异步 transport 重试、helper 缓冲与重试、单请求禁用重试、
 嵌套重试检测、累计等待预算、截止时间，以及 asyncio/Trio 两种异步运行时。
 
-参考：[HTTPX2 transports](https://pydantic.dev/docs/httpx2/advanced/transports/)、
-[HTTPX Retries API](https://will-ockmore.github.io/httpx-retries/api/)。
+参考：[HTTPX2 transports](https://pydantic.dev/docs/httpx2/advanced/transports/)

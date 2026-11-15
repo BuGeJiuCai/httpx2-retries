@@ -22,10 +22,8 @@ dev = [
 ]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
+packages = ["httpx2_retries"]
+package-dir = {httpx2_retries = "src"}
 
 [tool.setuptools.package-data]
 httpx2_retries = ["py.typed"]

@@ -1,8 +1,3 @@
-# !/usr/bin/python3
-# @Author   : Mr.Nobody
-# @Software : PyCharm
-# @Time     : 2026/09/17 18:23:58
-
 from __future__ import annotations
 
 import ssl

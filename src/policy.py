@@ -1,9 +1,3 @@
-# !/usr/bin/python3
-# @Author   : Mr.Nobody
-# @Software : PyCharm
-# @Time     : 2026/09/17 18:23:50
-
-
 from __future__ import annotations
 
 import inspect
@@ -69,7 +63,8 @@ def _number(name: str, value: float, *, positive: bool = False) -> None:
 
 @dataclass(frozen=True)
 class Retry:
-    """Retry policy. total excludes the initial attempt.
+    """
+    Retry policy. total excludes the initial attempt.
 
     None collections select defaults; empty collections disable conditions.
     Runtime counters never mutate shared policies. Counter fields and

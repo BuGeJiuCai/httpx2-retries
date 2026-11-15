@@ -136,16 +136,18 @@ class SyncHelperTests(unittest.TestCase):
             time.sleep(0.05)
             return _response(200)
 
-        with httpx2.Client(
-            transport=httpx2.MockTransport(handler), trust_env=False
-        ) as client:
-            with self.assertRaises(RetryDeadlineExceeded):
-                retry_request(
-                    client,
-                    "GET",
-                    "https://example.com/resource",
-                    retry=Retry(total=1, backoff_factor=0, max_elapsed_time=0.01),
-                )
+        with (
+            httpx2.Client(
+                transport=httpx2.MockTransport(handler), trust_env=False
+            ) as client,
+            self.assertRaises(RetryDeadlineExceeded),
+        ):
+            retry_request(
+                client,
+                "GET",
+                "https://example.com/resource",
+                retry=Retry(total=1, backoff_factor=0, max_elapsed_time=0.01),
+            )
 
 
 class AsyncTransportTests(unittest.TestCase):
